@@ -24,7 +24,6 @@ func UpdateOrCreateRecord(db *sql.DB, total int, w io.Writer) {
 	if err != nil {
 		fmt.Fprintf(w, "Error occurred on Records table during insert new total record: %s\n", err.Error())
 	}
-	fmt.Printf("Latest record has been updated\n")
 }
 
 func InsertTag(db *sql.DB, tag model.TopicTag, w io.Writer) {
@@ -33,7 +32,6 @@ func InsertTag(db *sql.DB, tag model.TopicTag, w io.Writer) {
 	if err != nil {
 		fmt.Fprintf(w, "Error occurred on Tag table during insertion at %s, %s: %s\n", tag.ID, tag.Name, err.Error())
 	}
-	fmt.Printf("Insert Tag record: %s\n", tag.Name)
 }
 
 func InsertQuestion(db *sql.DB, question model.Question, w io.Writer) {
@@ -42,7 +40,6 @@ func InsertQuestion(db *sql.DB, question model.Question, w io.Writer) {
 	if err != nil {
 		fmt.Fprintf(w, "Error occurred on Question table during insertion at No. - %s, with title - %s: %s\n", question.FrontendQuestionID, question.Title, err.Error())
 	}
-	fmt.Printf("Insert Question record: %s - %s\n", question.FrontendQuestionID, question.Title)
 }
 
 func InsertQuestionTag(db *sql.DB, questionId int, tag string, w io.Writer) {
@@ -51,5 +48,4 @@ func InsertQuestionTag(db *sql.DB, questionId int, tag string, w io.Writer) {
 	if err != nil {
 		fmt.Fprintf(w, "Error occurred on QuestionTag table during insertion at Question No. - %d, and Tag No. - %s: %s\n", questionId, tag, err.Error())
 	}
-	fmt.Printf("Insert QuestionTag record: %d - %s\n", questionId, tag)
 }
