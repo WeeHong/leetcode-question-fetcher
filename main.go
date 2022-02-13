@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"database/sql"
+	"flag"
 	"fmt"
 	"log"
 	"os"
@@ -16,6 +17,25 @@ import (
 	"github.com/weehong/leetcode-tracker/graphql"
 	"github.com/weehong/leetcode-tracker/query"
 )
+
+var host, port, user, password, dbname string
+var ssl *bool
+
+func init() {
+	ssl = flag.Bool("ssl", false, "Require SSL to connect database")
+	flag.Parse()
+
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Unable to load env file")
+	}
+
+	host = os.Getenv("POSTGRES_HOST")
+	port = os.Getenv("POSTGRES_PORT")
+	user = os.Getenv("POSTGRES_USER")
+	password = os.Getenv("POSTGRES_PASSWORD")
+	dbname = os.Getenv("POSTGRES_DB")
+}
 
 func main() {
 	p := "/temp/leetcode-fetcher"
@@ -42,18 +62,7 @@ func main() {
 		fmt.Fprintf(w, "GraphQL Error: %s", err.Error())
 	}
 
-	err = godotenv.Load()
-	if err != nil {
-		fmt.Fprintf(w, "Error loading .env file: %s", err.Error())
-	}
-
-	host := os.Getenv("POSTGRES_HOST")
-	port := os.Getenv("POSTGRES_PORT")
-	user := os.Getenv("POSTGRES_USER")
-	password := os.Getenv("POSTGRES_PASSWORD")
-	dbname := os.Getenv("POSTGRES_DB")
-
-	db, err := sql.Open("postgres", database.PsqlConnection(host, port, user, password, dbname))
+	db, err := sql.Open("postgres", database.PsqlConnection(host, port, user, password, dbname, ssl))
 	if err != nil {
 		fmt.Fprintf(w, "Failed to open connection to database: %s", err.Error())
 		os.Exit(-1)
