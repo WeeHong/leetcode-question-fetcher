@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -32,6 +33,9 @@ func main() {
 	defer f.Close()
 
 	w := bufio.NewWriter(f)
+
+	dt := time.Now()
+	fmt.Fprintln(w, "Script Triggered: ", dt.String())
 
 	resp, err := graphql.Query()
 	if err != nil {
