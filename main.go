@@ -56,6 +56,7 @@ func main() {
 	db, err := sql.Open("postgres", database.PsqlConnection(host, port, user, password, dbname))
 	if err != nil {
 		fmt.Fprintf(w, "Failed to open connection to database: %s", err.Error())
+		os.Exit(-1)
 	}
 
 	defer db.Close()
@@ -63,6 +64,7 @@ func main() {
 	err = db.Ping()
 	if err != nil {
 		fmt.Fprintf(w, "Failed to ping database: %s", err.Error())
+		os.Exit(-1)
 	}
 
 	currentRecord := query.FetchLatestRecord(db, w)
