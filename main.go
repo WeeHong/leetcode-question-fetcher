@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"database/sql"
 	"fmt"
 	"log"
@@ -16,14 +17,30 @@ import (
 )
 
 func main() {
+	p := "/temp/leetcode-fetcher"
+	if _, err := os.Stat(p); os.IsNotExist(err) {
+		err := os.MkdirAll(p, os.ModePerm)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	f, err := os.OpenFile("/temp/leetcode-fetcher/log.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+
+	w := bufio.NewWriter(f)
+
 	resp, err := graphql.Query()
 	if err != nil {
-		log.Fatalf("GraphQL Error: %s", err)
+		fmt.Fprintf(w, "GraphQL Error: %s", err.Error())
 	}
 
 	err = godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		fmt.Fprintf(w, "Error loading .env file: %s", err.Error())
 	}
 
 	host := os.Getenv("POSTGRES_HOST")
@@ -34,33 +51,34 @@ func main() {
 
 	db, err := sql.Open("postgres", database.PsqlConnection(host, port, user, password, dbname))
 	if err != nil {
-		log.Fatalf("Failed to open connection to database: %s", err.Error())
+		fmt.Fprintf(w, "Failed to open connection to database: %s", err.Error())
 	}
 
 	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
-		log.Fatalf("Failed to ping database: %s", err.Error())
+		fmt.Fprintf(w, "Failed to ping database: %s", err.Error())
 	}
 
-	currentRecord := query.FetchLatestRecord(db)
+	currentRecord := query.FetchLatestRecord(db, w)
 
 	// Only update the database when there's new record
 	if currentRecord != resp.ProblemsetQuestionList.Total {
 
 		for i, question := range resp.ProblemsetQuestionList.Questions {
-			query.InsertQuestion(db, question)
+			query.InsertQuestion(db, question, w)
 			if questionId, err := strconv.Atoi(question.FrontendQuestionID); err == nil {
 				for _, tag := range question.TopicTags {
-					query.InsertTag(db, tag)
-					query.InsertQuestionTag(db, questionId, tag.ID)
+					query.InsertTag(db, tag, w)
+					query.InsertQuestionTag(db, questionId, tag.ID, w)
 				}
 			}
-			fmt.Printf("--------- %d record(s) inserted ---------\n\n", i+1)
+			fmt.Fprintf(w, "%d record(s) inserted.\n", i+1)
 		}
 
-		query.UpdateOrCreateRecord(db, resp.ProblemsetQuestionList.Total)
-		fmt.Printf("--------- Completed ---------\n\n")
+		query.UpdateOrCreateRecord(db, resp.ProblemsetQuestionList.Total, w)
+		fmt.Fprintf(w, "Completed.\n")
 	}
+	w.Flush()
 }
