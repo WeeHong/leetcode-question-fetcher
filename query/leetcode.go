@@ -10,7 +10,7 @@ import (
 
 func FetchLatestRecord(db *sql.DB, w io.Writer) int {
 	var total int
-	q := `SELECT total FROM records ORDER BY created_at DESC LIMIT 1`
+	q := `SELECT total FROM records ORDER BY created_at ASC LIMIT 1`
 	err := db.QueryRow(q).Scan(&total)
 	if err != nil {
 		fmt.Fprintf(w, "Error occurred on Record during fetching the latest record: %s\n", err.Error())
