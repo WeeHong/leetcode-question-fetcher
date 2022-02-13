@@ -47,7 +47,7 @@ func Query() (*model.LeetCode, error) {
 
 	request.Var("categorySlug", "")
 	request.Var("skip", 0)
-	request.Var("limit", 5)
+	request.Var("limit", -1)
 	request.Var("filters", map[string]string{})
 
 	ctx := context.Background()
