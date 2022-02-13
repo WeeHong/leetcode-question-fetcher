@@ -13,8 +13,7 @@ func FetchLatestRecord(db *sql.DB) int {
 	q := `SELECT total FROM records ORDER BY created_at DESC LIMIT 1`
 	err := db.QueryRow(q).Scan(&total)
 	if err != nil {
-		log.Panicf("Error occurred on Record during fetching the latest record: %s\n", err.Error())
-		return 0
+		log.Fatalf("Error occurred on Record during fetching the latest record: %s\n", err.Error())
 	}
 	return total
 }
