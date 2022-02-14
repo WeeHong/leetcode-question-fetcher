@@ -4,7 +4,14 @@ This is the LeetCode question fetcher that written by Golang
 This repository uses GraphQL to fetch the LeetCode Question and the data stores in PostgreSQL
 
 ## Linux Environment Deployment
-- GOOS=linux GOARCH=amd64 go build -o ./LeetCode-Tracker main.go
+
+### Prerequisite
+1. Database [PostgreSQL]
+
+- Clone the repository<br/>
+`git clone git@github.com:WeeHong/leetcode-question-fetcher.git`
+- Build the project<br/>
+`GOOS=linux GOARCH=amd64 go build -o ./LeetCode-Tracker main.go`
 - SystemD setup
 ```
 [Unit]
