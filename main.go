@@ -57,10 +57,10 @@ func main() {
 	defer db.Close()
 
 	currentRecord := query.FetchLatestRecord(db, w)
-	fmt.Println("Database connection has been fetched successfully.")
+	fmt.Println("Database connection links successfully.")
 
-	if currentRecord != resp.ProblemsetQuestionList.Total {
-		createRecord(currentRecord, resp, db, w)
+	if currentRecord != resp.ProblemsetQuestionList.Total-1 {
+		createRecord(resp, db, w)
 	}
 
 	w.Flush()
@@ -107,7 +107,7 @@ func databaseConnection(w *bufio.Writer) *sql.DB {
 	return db
 }
 
-func createRecord(currentRecord int, resp *model.LeetCode, db *sql.DB, w *bufio.Writer) {
+func createRecord(resp *model.LeetCode, db *sql.DB, w *bufio.Writer) {
 	fmt.Fprintf(w, "Inserting data ...\n")
 	for _, question := range resp.ProblemsetQuestionList.Questions {
 		query.InsertQuestion(db, question, w)
@@ -119,6 +119,6 @@ func createRecord(currentRecord int, resp *model.LeetCode, db *sql.DB, w *bufio.
 		}
 	}
 
-	query.UpdateOrCreateRecord(db, resp.ProblemsetQuestionList.Total, w)
+	query.UpdateOrCreateRecord(db, resp.ProblemsetQuestionList.Total-1, w)
 	fmt.Fprintf(w, "Data insertion completed.\n")
 }
