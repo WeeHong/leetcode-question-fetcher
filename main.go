@@ -57,7 +57,7 @@ func main() {
 	defer db.Close()
 
 	currentRecord := query.FetchLatestRecord(db, w)
-	fmt.Println("Database connection links successfully.")
+	fmt.Println("Database connection establishes successfully.")
 
 	if currentRecord != resp.ProblemsetQuestionList.Total-1 {
 		createRecord(resp, db, w)
