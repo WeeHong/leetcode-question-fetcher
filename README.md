@@ -7,10 +7,10 @@ This repository uses GraphQL to fetch the LeetCode Question and the data stores 
 
 ### Prerequisite
 1. Database [PostgreSQL]
+2. Create a `cert` directory
+3. Populate the database query
 
 ### Deployment
-PS: **You need to place your database SSL into a cert directory**
-
 - Clone the repository<br/>
 `git clone git@github.com:WeeHong/leetcode-question-fetcher.git`
 - Build the project<br/>
